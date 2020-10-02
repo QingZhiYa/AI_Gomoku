@@ -9,13 +9,12 @@ public class Main {
     public static String teamName = "teamname1";
 
     public static void main(String[] args) {
-
+        Game game = new Game();
         if(readFile("end_game") == null){
             while(readFile(teamName + ".go") != null){
                 System.out.println(".go file founded");
-                Game game = new Game(readFile("move_file"));
-
-
+                game.updateBoard(readFile("move_file"));
+                game.makeMove();
 
                 return;
             }
@@ -32,7 +31,7 @@ public class Main {
     }
 
 
-    private static String readFile(String fileN){
+    private static File readFile(String fileN){
         try {
             String path = "./referee/" + fileN;
             File file = new File(path);
@@ -43,7 +42,7 @@ public class Main {
                 content += data;
             }
             myReader.close();
-            return content;
+            return file;
         } catch (FileNotFoundException e) {
             //e.printStackTrace();
             return null;
