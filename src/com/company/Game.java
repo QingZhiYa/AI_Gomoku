@@ -15,7 +15,7 @@ public class Game {
 
     Game(){
         //System.out.println(move);
-        setUpChat();
+        setUpChart();
         setUpBoard();
         tree = new Node();
 
@@ -30,7 +30,7 @@ public class Game {
         }return true;
     }
 
-    private boolean setUpChat(){
+    private boolean setUpChart(){
         scoreChart.put(new int[]{1, 1 , 0, 0, 0}, 5);
         scoreChart.put(new int[]{1, 1 , 1, 0, 0}, 10);
         scoreChart.put(new int[]{1, 1 , 1, 1, 0}, 20);
