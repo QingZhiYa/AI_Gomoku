@@ -9,22 +9,26 @@ public class Main {
     public static String teamName = "teamname1";
 
     public static void main(String[] args) {
-        Game game = new Game();
-        if(readFile("end_game") == null){
-            while(readFile(teamName + ".go") != null){
-                System.out.println(".go file founded");
-                game.updateBoard(readFile("move_file"));
-                game.makeMove();
-
-                return;
-            }
-        }else{
-            System.out.println("Game Ended");
-        }
+        Game game = new Game(teamName);
+         while(true){
+                //if it is my turn
+                if(readFile(teamName + ".go") != null){
+                    //System.out.println(readFile("end_game"));
+                    if(readFile("end_game") == null){
+                        System.out.println(".go file founded");
+                        game.updateBoard(readFile("move_file"));
+                        game.makeMove(readFile("move_file"));
 
 
 
+                    }else{
+                        System.out.println("Game Ended");
+                        System.exit(0);
+                    }
+                }
 
+
+         }
 
 
 
@@ -33,7 +37,7 @@ public class Main {
 
     private static File readFile(String fileN){
         try {
-            String path = "./referee/" + fileN;
+            String path = "./" + fileN;
             File file = new File(path);
             Scanner myReader = new Scanner(file);
             String content = "";
@@ -48,4 +52,6 @@ public class Main {
             return null;
         }
     }
+
+
 }
