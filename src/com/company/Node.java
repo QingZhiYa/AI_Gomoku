@@ -13,6 +13,7 @@ public class Node {
         score = -1;
     }
 
+    //expand children
     public Node addChild(Node child){
         children.add(child);
         return this;
