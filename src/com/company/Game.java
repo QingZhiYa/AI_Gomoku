@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -11,10 +12,11 @@ import java.util.Scanner;
 public class Game {
     int[][] board = new int[15][15];
     int score = 0;
-    Node tree;
+    //Node tree;
     HashMap<int[], Integer> scoreChart = new HashMap<>();
     boolean firstMove = false;
     String teamName = "";
+    boolean secondMove = true;
 
 
     Game(String name){
@@ -22,7 +24,7 @@ public class Game {
         teamName = name;
         setUpChart();
         setUpBoard();
-        tree = new Node();
+        //tree = new Node();
 
     }
 
@@ -51,10 +53,24 @@ public class Game {
         return true;
     }
 
-    public boolean makeMove(File file){
+    public String makeMove(File file){
         //move
-        String move = minimax();
-        return rewriteFile(file, move);
+        String move = "";
+        //first move
+        if(firstMove){
+            System.out.println("First Move!");
+            move =  centerMove();
+        }else if(secondMove){
+            //second move
+            System.out.println("Second Move!");
+            move = centerMove();
+        }else{
+            move = minimax(5);
+        }
+
+
+        rewriteFile(file, move);
+        return move;
 
 
 
@@ -67,13 +83,14 @@ public class Game {
         String content = readMove(move);
         if(content == ""){
             firstMove = true;
+            secondMove = false;
             return true;
         }
         String[] parse =  content.split(" ");
         System.out.println(content);
         if(parse.length == 3 && Integer.parseInt(parse[2]) != -1){
             char c = Character.toUpperCase(parse[1].charAt(0));
-            System.out.println(c);
+            //System.out.println(c);
             if(c-64-1 >= 15 || c-64-1 < 0 ||
                     Integer.parseInt(parse[2])-1 >=15 || Integer.parseInt(parse[2])-1 < 0){
                 System.out.println("The move_file includes move range > 15 or < 1");
@@ -89,9 +106,9 @@ public class Game {
     }
 
 
-    private String readMove(File move){
+    public String readMove(File move){
         try {
-            System.out.println(move);
+            //System.out.println(move);
             Scanner myReader = new Scanner(move);
             String content = "";
             while (myReader.hasNextLine()) {
@@ -106,23 +123,93 @@ public class Game {
         }
     }
 
-    private String firstMove(){
+    private String centerMove(){
         //put it in the center
         board[7][7] = 1;
 
-
+        firstMove = false;
+        secondMove = false;
         return teamName+" H 8";
     }
 
+//    private boolean secondMove(){
+//        //make sure in center;
+//        if(board[7][7] == -1){
+//            board[7][7] = 1;
+//        }
+//        return true;
+//    }
 
-    private int utilityFunc(int[] oneLine){
+
+    private int oneLineScore(int[] oneLine){
+        if(oneLine.length < 5){return 0;}
         int point = 0;
-        for(int i = 0; i < 10; i ++){
+        for(int i = 0; i < oneLine.length-5; i ++){
             int[] five = Arrays.copyOfRange(oneLine, 0, 5);
             if(scoreChart.containsKey(five)){
                 point+=scoreChart.get(five);
             }
         }return point;
+    }
+
+    private int[] getColumn(int[][] array, int index){
+        int[] column = new int[array[0].length];
+        for(int i=0; i<column.length; i++){
+            column[i] = array[i][index];
+        }
+        return column;
+    }
+
+    private int[][] horizontalTransform(int[][] array){
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length / 2; j++) {
+                int temp = array[i][j];
+                array[i][j] = array[i][array.length - 1 - j];
+                array[i][array.length - 1 -j] = temp;
+            }
+        }return array;
+    }
+
+    private int[][] diagonalOrder(int matrix[][]) {
+        int[][] diagArray = new int[29][15];
+
+        for (int line = 1; line <= (15 + 15 - 1); line++) {
+            int start_col = Math.max(0, line - 15);
+
+            int count = Math.min(Math.min(line, (15 - start_col)), 15);
+
+            for (int j = 0; j < count; j++)
+                diagArray[line-1][j] = matrix[Math.min(15, line) - j - 1][start_col + j];
+
+        }return diagArray;
+    }
+
+    private int utilityFunc(Node n){
+
+        int point = 0;
+        int[][] b = n.getFutureBoard();
+
+        //each row score
+        for(int r = 0; r < 15; r++){
+            point += oneLineScore(b[r]);
+        }
+
+        //each col score
+        for(int c = 0; c < 15; c++){
+            point += oneLineScore(getColumn(b, c));
+        }
+        //"/" Diagonal score
+        int[][] diag = diagonalOrder(b);
+        for(int i = 0; i < 29; i++){
+            point += oneLineScore(diag[i]);
+        }
+        //"\" Diagonal score
+        //flip horizontally
+        int[][] diag2 = diagonalOrder(horizontalTransform(b));
+        for(int j = 0; j < 15; j++){
+            point += oneLineScore(diag2[j]);
+        }
+        return point;
 
 
     }
@@ -132,25 +219,82 @@ public class Game {
         return true;
     }
 
-    private boolean secondMove(){
-        //To-Do
-        return true;
+
+
+    private int evaluateFunc(Node n, int turn){
+        ArrayList<Node> children = n.getChildren();
+        if(turn == 1){
+            int max = Integer.MIN_VALUE;
+            for(Node child : children){
+                if(child.getScore() > max){
+                    max = child.getScore();
+                    n.setBestMove(child.getMove());
+                }
+            }return max;
+        }else{
+            int min = Integer.MAX_VALUE;
+            for(Node child : children){
+                if(child.getScore() < min){
+                    min = child.getScore();
+                    n.setBestMove(child.getMove());
+                }
+            }return min;
+
+        }
     }
 
-    private int evaluateFunc(){
-        //To-Do
+    private int flipTurn(int turn){
+        if(turn == 1){return -1;}
+        if(turn == -1){return 1;}
         return 0;
     }
 
 
+    private Node addChildren(Node node, int turn, int depth){
+        if(depth <= 0){
+            int score = utilityFunc(node);
+            node.setScore(score);
+            //return score;
+            return node;
+        }
+        for(int i = 0; i < 15; i++){
+            for(int j = 0; j < 15; j++){
+                //empty
+                if(board[i][j] == 0){
+                        Node child = new Node();
+                        child.setMove(new int[]{i,j});
+                        int[][] newBoard = node.getFutureBoard();
+                        newBoard[i][j] = turn;
+                        child.setFutureBoard(newBoard);
+                        node.addChild(child);
+                        addChildren(child, flipTurn(turn),depth-1);
+                        node.setScore(evaluateFunc(node,flipTurn(turn)));
 
-    private String minimax(){
-        if(firstMove){
-            return firstMove();
+                        //node.setScore(addChildren(node, flipTurn(turn),depth-1));
+                }
+            }
         }
 
+        return node;
+    }
 
-        return "";
+
+    private String minimax(int depth){
+        Node node = new Node();
+        node.setFutureBoard(board);
+        node = addChildren(node, 1, depth);
+        int[] move = node.getBestMove();
+        return printMove(move);
+    }
+
+    private String printMove(int[] move){
+        String print = teamName + " ";
+        char letter = (char) (move[0]+1+64);
+        print += letter;
+        print += " ";
+        print += Integer.toString(move[1]+1);
+
+        return print;
     }
 
     public boolean rewriteFile(File file, String content){

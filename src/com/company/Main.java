@@ -10,22 +10,30 @@ public class Main {
 
     public static void main(String[] args) {
         Game game = new Game(teamName);
+        String lastMove = "INITIATE";
          while(true){
-                //if it is my turn
-                if(readFile(teamName + ".go") != null){
-                    //System.out.println(readFile("end_game"));
-                    if(readFile("end_game") == null){
-                        System.out.println(".go file founded");
-                        game.updateBoard(readFile("move_file"));
-                        game.makeMove(readFile("move_file"));
+
+              //if it is my turn
+              if(readFile(teamName + ".go") != null){
+                  //System.out.println("variable:"+lastMove);
+                  //System.out.println("Inside the file:"+game.readMove(readFile("move_file")));
+                  File moveF = readFile("move_File");
+                  if(moveF != null && !game.readMove(moveF).equals(lastMove)){
+                      //System.out.println(readFile("end_game"));
+                      if(readFile("end_game") == null){
+                          //System.out.println(".go file founded");
+                          game.updateBoard(readFile("move_file"));
+                          lastMove = game.makeMove(readFile("move_file"));
 
 
 
-                    }else{
-                        System.out.println("Game Ended");
-                        System.exit(0);
-                    }
-                }
+                      }else{
+                          System.out.println("Game Ended");
+                          System.exit(0);
+                      }
+                  }
+
+              }
 
 
          }
