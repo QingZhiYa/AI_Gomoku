@@ -13,10 +13,11 @@ public class Game {
     int[][] board = new int[15][15];
     int score = 0;
     //Node tree;
-    HashMap<int[], Integer> scoreChart = new HashMap<>();
+    HashMap<Key, Integer> scoreChart = new HashMap<>();
     boolean firstMove = false;
     String teamName = "";
     boolean secondMove = true;
+    int turn = 1;
 
 
     Game(String name){
@@ -25,6 +26,12 @@ public class Game {
         setUpChart();
         setUpBoard();
         //tree = new Node();
+//        int[] x = new int[] {1,1,0,0,0};
+        //int val = scoreChart.get(x);
+        //System.out.println(val);
+//        if(scoreChart.containsKey(x)){
+//            System.out.println("Countain!");
+//        }
 
     }
 
@@ -38,14 +45,27 @@ public class Game {
     }
 
     private boolean setUpChart(){
-        scoreChart.put(new int[]{1, 1 , 0, 0, 0}, 5);
-        scoreChart.put(new int[]{1, 1 , 1, 0, 0}, 10);
-        scoreChart.put(new int[]{1, 1 , 1, 1, 0}, 20);
-        scoreChart.put(new int[]{1, 1 , 1, 1, 1}, 10000); //win
+        scoreChart.put(new Key(1, 0 , 1, 0, 0), 2);
+        scoreChart.put(new Key(1, 1 , 0, 0, 0), 5);
+        scoreChart.put(new Key(1, 1 , 1, 0, 0), 10);
+        scoreChart.put(new Key(1, 1 , 1, 1, 0), 20);
+        scoreChart.put(new Key(1, 1 , 1, 1, 1), 10000); //win
 
-        scoreChart.put(new int[]{1, 1 , 0, 1, 0}, 10);
-        scoreChart.put(new int[]{1, 1 , 0, 0, 1}, 7);
-        scoreChart.put(new int[]{1, 0 , 0, 0, 1}, 3);
+        scoreChart.put(new Key(1, 1 , 0, 1, 0), 10);
+        scoreChart.put(new Key(1, 1 , 0, 0, 1), 7);
+        scoreChart.put(new Key(1, 0 , 0, 0, 1), 3);
+
+        scoreChart.put(new Key(1, -1 , -1, -1, 1), 15);
+        scoreChart.put(new Key(0, 1 , -1, 0, 0), 1);
+        scoreChart.put(new Key(0, 0 , -1, -1, 0), 1);
+//        System.out.println("PUT");
+//        int[] x = new int[]{1,1,0,0,0};
+//        Key k = new Key (x);
+//        Key k = new Key(1,1,0,0,0);
+//        if(scoreChart.containsKey(k)){
+//            System.out.println("Countain!");
+//        }
+
 
         //...
 
@@ -65,7 +85,7 @@ public class Game {
             System.out.println("Second Move!");
             move = centerMove();
         }else{
-            move = minimax(5);
+            move = minimax(1);
         }
 
 
@@ -145,9 +165,15 @@ public class Game {
         if(oneLine.length < 5){return 0;}
         int point = 0;
         for(int i = 0; i < oneLine.length-5; i ++){
-            int[] five = Arrays.copyOfRange(oneLine, 0, 5);
-            if(scoreChart.containsKey(five)){
-                point+=scoreChart.get(five);
+
+            int[] five = Arrays.copyOfRange(oneLine, i, i+5);
+            Key key = new Key(five);
+//            if(scoreChart.containsKey(new int[] {1,1,0,0,0})){
+//                System.out.println("Countain!");
+//            }
+            if(scoreChart.containsKey(key)){
+                //System.out.println("Add Points");
+                point+=scoreChart.get(key);
             }
         }return point;
     }
@@ -209,6 +235,7 @@ public class Game {
         for(int j = 0; j < 15; j++){
             point += oneLineScore(diag2[j]);
         }
+        System.out.println(point);
         return point;
 
 
@@ -244,9 +271,13 @@ public class Game {
     }
 
     private int flipTurn(int turn){
-        if(turn == 1){return -1;}
-        if(turn == -1){return 1;}
-        return 0;
+        if(turn == 1){
+            turn = -1;
+        }
+        if(turn == -1){
+            turn = 1;
+        }
+        return turn;
     }
 
 
@@ -260,10 +291,10 @@ public class Game {
         for(int i = 0; i < 15; i++){
             for(int j = 0; j < 15; j++){
                 //empty
-                if(board[i][j] == 0){
+                if(node.getFutureBoard()[i][j] == 0){
                         Node child = new Node();
                         child.setMove(new int[]{i,j});
-                        int[][] newBoard = node.getFutureBoard();
+                        int[][] newBoard = copyArray(node.getFutureBoard());
                         newBoard[i][j] = turn;
                         child.setFutureBoard(newBoard);
                         node.addChild(child);
@@ -278,11 +309,20 @@ public class Game {
         return node;
     }
 
+    private int[][] copyArray(int[][] ary){
+        int[][] copy = new int[15][15];
+        for(int i = 0; i < 15; i++){
+            for(int j = 0; j < 15; j++){
+                copy[i][j] = ary[i][j];
+            }
+        }return copy;
+    }
 
     private String minimax(int depth){
         Node node = new Node();
-        node.setFutureBoard(board);
-        node = addChildren(node, 1, depth);
+        node.setFutureBoard(copyArray(board));
+        turn = 1;
+        node = addChildren(node, turn, depth);
         int[] move = node.getBestMove();
         return printMove(move);
     }

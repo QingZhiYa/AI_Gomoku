@@ -18,13 +18,14 @@ public class Main {
                   //System.out.println("variable:"+lastMove);
                   //System.out.println("Inside the file:"+game.readMove(readFile("move_file")));
                   File moveF = readFile("move_File");
+                  //team name can not be the same
                   if(moveF != null && !game.readMove(moveF).equals(lastMove)){
                       //System.out.println(readFile("end_game"));
                       if(readFile("end_game") == null){
                           //System.out.println(".go file founded");
                           game.updateBoard(readFile("move_file"));
                           lastMove = game.makeMove(readFile("move_file"));
-
+                          System.out.println("Move: "+lastMove);
 
 
                       }else{
