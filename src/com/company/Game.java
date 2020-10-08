@@ -65,8 +65,6 @@ public class Game {
 
 
         //...
-
-
         return true;
     }
 
@@ -76,7 +74,7 @@ public class Game {
         //first move
         if(firstMove){
             System.out.println("First Move!");
-            move =  centerMove();
+            move = centerMove();
         }else if(secondMove){
             //second move
             System.out.println("Second Move!");
@@ -155,22 +153,24 @@ public class Game {
 
         firstMove = false;
         secondMove = false;
-        return teamName+" H 8";
+        return teamName + " H 8";
     }
 
-//    private boolean secondMove(){
-//        //make sure in center;
-//        if(board[7][7] == -1){
-//            board[7][7] = 1;
-//        }
-//        return true;
-//    }
+    private boolean secondMove(){
+        //make sure in center;
+        if(board[7][7] == -1){
+            board[7][7] = 1;
+        }
+        return true;
+    }
+
+
 
 
     private int oneLineScore(int[] oneLine){
         if(oneLine.length < 5){return 0;}
         int point = 0;
-        for(int i = 0; i < oneLine.length-5; i ++){
+        for(int i = 0; i < oneLine.length - 5; i++){
 
             int[] five = Arrays.copyOfRange(oneLine, i, i+5);
             Key key = new Key(five);
@@ -247,46 +247,32 @@ public class Game {
 
     }
 
-    private Node alpha_beta_pruning(Node n){
-        //max, I search +inf/-inf in Java but it has type double
-        int alpha = 10000000;
-        //min
-        int beta = -10000000;
-
-        //assuming we only have two layers right now
-        //then parent node n is always the max layer
-        ArrayList<Node> mychildren = n.getChildren();
-
-        //min = value of first child
-        alpha = utilityFunc(mychildren.get(0));
-        //remember the child with the minimum value right now, which is the first in DFS
-        int currentminchild = 0;
-
-        //evaluate the rest children
-        for(int k = 1; k < mychildren.size(); k++){
-            //if greater, opponent will never choose you
-            if (utilityFunc(mychildren.get(k)) > alpha){
-                mychildren.remove(k);
-            //if smaller, prune away the previous min node
-            }else if (utilityFunc(mychildren.get(k)) < alpha){
-                //update min
-                alpha = utilityFunc(mychildren.get(k));
-                //remove the previous min node
-                mychildren.remove(currentminchild);
-                //remember the new min node
-                currentminchild = k;
-            }
-        }
-
-        //update the list of children that survive after pruning
-        //here it throws an error of Error:(282, 11) 'children' has private access in 'com.company.Node'
-        //how to add the entire list of children directly?
-        n.children = mychildren;
-
-        return n;
+    private String alpha_beta_pruning(Node n){
+        return "";
     }
 
-
+    private boolean has_neighbor(Node n){
+        int column = n.getMove()[0];
+        int row = n.getMove()[1];
+        if (column == 0 || column == 14 ||
+                row == 0 || row == 14){
+            return true;
+        }
+        else{
+            /* check all these 0 position in the furture board
+                     0 0 0
+                     0 1 0
+                     0 0 0 */
+            return n.getFutureBoard()[column + 1][row] == 1 ||
+                    n.getFutureBoard()[column - 1][row] == 1 ||
+                    n.getFutureBoard()[column - 1][row - 1] == 1 ||
+                    n.getFutureBoard()[column - 1][row + 1] == 1 ||
+                    n.getFutureBoard()[column + 1][row - 1] == 1 ||
+                    n.getFutureBoard()[column + 1][row + 1] == 1 ||
+                    n.getFutureBoard()[column][row + 1] == 1 ||
+                    n.getFutureBoard()[column][row - 1] == 1;
+        }
+    }
 
     private int evaluateFunc(Node n, int turn){
         ArrayList<Node> children = n.getChildren();
@@ -306,6 +292,7 @@ public class Game {
                     n.setBestMove(child.getMove());
                 }
             }return min;
+
         }
     }
 
@@ -330,7 +317,7 @@ public class Game {
         for(int i = 0; i < 15; i++){
             for(int j = 0; j < 15; j++){
                 //empty
-                if(node.getFutureBoard()[i][j] == 0){
+                if(node.getFutureBoard()[i][j] == 0 && has_neighbor(node)){
                     Node child = new Node();
                     child.setMove(new int[]{i,j});
                     int[][] newBoard = copyArray(node.getFutureBoard());
