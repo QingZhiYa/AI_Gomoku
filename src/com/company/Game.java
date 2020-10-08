@@ -249,9 +249,9 @@ public class Game {
 
     private Node alpha_beta_pruning(Node n) {
         //max, I search +inf/-inf in Java but it has type double
-        int alpha = 10000000;
+        int alpha = Integer.MAX_VALUE;
         //min
-        int beta = -10000000;
+        int beta = Integer.MIN_VALUE;
 
         //assuming we only have two layers right now
         //then parent node n is always the max layer
