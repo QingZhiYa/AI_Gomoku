@@ -1,5 +1,8 @@
 package com.company;
 
+//1. choose the same best move (G 7) (G 7) again
+//2. alpha beta pruning
+//3. null pointer
 
 import java.io.File;
 import java.io.FileNotFoundException;
