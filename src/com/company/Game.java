@@ -265,18 +265,18 @@ public class Game {
         //evaluate the rest children
         for (int k = 1; k < mychildren.size(); k++) {
             //output the current min & max
-            System.out.println("Current (min,max) = ("+ beta +", ("+alpha+")");
+            System.out.println("Current (min,max) = ("+ beta +","+alpha+")");
             //if greater, opponent will never choose you
             if (utilityFunc(mychildren.get(k)) > beta) {
                 //mychildren.remove(k);
-                n.remove(mychildren.get(k));
+                n.removeChild(mychildren.get(k));
                 //if smaller, prune away the previous min node
             } else if (utilityFunc(mychildren.get(k)) < beta) {
                 //update min
                 beta = utilityFunc(mychildren.get(k));
                 //remove the previous min node
                 //mychildren.remove(currentminchild);
-                n.remove(mychildren.get(currentminchild));
+                n.removeChild(mychildren.get(currentminchild));
                 //remember the new min node
                 currentminchild = k;
             }
