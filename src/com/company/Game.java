@@ -300,14 +300,14 @@ public class Game {
                      0 0 0
                      0 1 0
                      0 0 0 */
-            return n.getFutureBoard()[column + 1][row] == 1 ||
-                    n.getFutureBoard()[column - 1][row] == 1 ||
-                    n.getFutureBoard()[column - 1][row - 1] == 1 ||
-                    n.getFutureBoard()[column - 1][row + 1] == 1 ||
-                    n.getFutureBoard()[column + 1][row - 1] == 1 ||
-                    n.getFutureBoard()[column + 1][row + 1] == 1 ||
-                    n.getFutureBoard()[column][row + 1] == 1 ||
-                    n.getFutureBoard()[column][row - 1] == 1;
+            return n.getFutureBoard()[column + 1][row] != 0 ||
+                    n.getFutureBoard()[column - 1][row] != 0 ||
+                    n.getFutureBoard()[column - 1][row - 1] != 0 ||
+                    n.getFutureBoard()[column - 1][row + 1] != 0 ||
+                    n.getFutureBoard()[column + 1][row - 1] != 0 ||
+                    n.getFutureBoard()[column + 1][row + 1] != 0 ||
+                    n.getFutureBoard()[column][row + 1] != 0 ||
+                    n.getFutureBoard()[column][row - 1] != 0;
         }
     }
 
