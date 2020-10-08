@@ -288,9 +288,9 @@ public class Game {
 
 
 
-    private boolean has_neighbor(Node n){
-        int column = n.getMove()[0];
-        int row = n.getMove()[1];
+    private boolean has_neighbor(int row, int column, Node n){
+//        int column = n.getMove()[0];
+//        int row = n.getMove()[1];
         if (column == 0 || column == 14 ||
                 row == 0 || row == 14){
             return true;
@@ -354,7 +354,7 @@ public class Game {
         for(int i = 0; i < 15; i++){
             for(int j = 0; j < 15; j++){
                 //empty
-                if(node.getFutureBoard()[i][j] == 0 && has_neighbor(node)){
+                if(node.getFutureBoard()[i][j] == 0 && has_neighbor(i, j, node)){
                     Node child = new Node();
                     child.setMove(new int[]{i,j});
                     int[][] newBoard = copyArray(node.getFutureBoard());
