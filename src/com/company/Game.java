@@ -258,19 +258,21 @@ public class Game {
         ArrayList<Node> mychildren = n.getChildren();
 
         //min = value of first child
-        alpha = utilityFunc(mychildren.get(0));
+        beta = utilityFunc(mychildren.get(0));
         //remember the child with the minimum value right now, which is the first in DFS
         int currentminchild = 0;
 
         //evaluate the rest children
         for (int k = 1; k < mychildren.size(); k++) {
+            //output the current min & max
+            System.out.println("Current (min,max) = ("+ beta +", ("+alpha+")");
             //if greater, opponent will never choose you
-            if (utilityFunc(mychildren.get(k)) > alpha) {
+            if (utilityFunc(mychildren.get(k)) > beta) {
                 mychildren.remove(k);
                 //if smaller, prune away the previous min node
-            } else if (utilityFunc(mychildren.get(k)) < alpha) {
+            } else if (utilityFunc(mychildren.get(k)) < beta) {
                 //update min
-                alpha = utilityFunc(mychildren.get(k));
+                beta = utilityFunc(mychildren.get(k));
                 //remove the previous min node
                 mychildren.remove(currentminchild);
                 //remember the new min node
