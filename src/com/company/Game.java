@@ -52,6 +52,7 @@ public class Game {
         scoreChart.put(new Key(1, -1 , -1, 0, 0), 10);
         scoreChart.put(new Key(1, -1 , -1, -1, 0), 30);
         scoreChart.put(new Key(1, -1 , -1, -1, -1), 50);
+        scoreChart.put(new Key(1, -1, 0, 0, 0), 2);
 
         scoreChart.put(new Key(-1, -1 , 0, 0, 0), -5);
         scoreChart.put(new Key(-1, -1 , -1, 0, 0), -30);
@@ -111,7 +112,7 @@ public class Game {
             if(parse[0].equals(teamName) || c == Character.toUpperCase(c)){
                 return false;
             }
-            System.out.println(content);
+
             //System.out.println(c);
             c = Character.toUpperCase(c);
             if(c-64-1 >= 15 || c-64-1 < 0 ||
@@ -119,7 +120,11 @@ public class Game {
                 System.out.println("The move_file includes move range > 15 or < 1");
                 return false;
             }
+            System.out.println(content);
             board[Integer.parseInt(parse[2])-1][c-64-1] = -1;
+            if(parse[1].equals("h") && parse[2].equals(9)){
+                System.out.println("That point: "+board[8][7]);
+            }
 
             return true;
         }else{
@@ -174,14 +179,14 @@ public class Game {
 
             int[] five = Arrays.copyOfRange(oneLine, i, i+5);
             Key key = new Key(five);
-//            if(scoreChart.containsKey(new int[] {1,1,0,0,0})){
-//                System.out.println("Countain!");
-//            }
+
             if(scoreChart.containsKey(key)){
                 //System.out.println("Add Points");
                 point+=scoreChart.get(key);
             }
-        }return point;
+        }
+        //System.out.println("Points: "+point);
+        return point;
     }
 
     private int[] getColumn(int[][] array, int index){
@@ -217,28 +222,32 @@ public class Game {
     }
 
     private int utilityFunc(Node n){
-
+        //System.out.println("Move: "+ n.getMove()[0]+ " "+ n.getMove()[1]);
         int point = 0;
         int[][] b = n.getFutureBoard();
 
         //each row score
         for(int r = 0; r < 15; r++){
+            //System.out.println("Row: "+r);
             point += oneLineScore(b[r]);
         }
 
         //each col score
         for(int c = 0; c < 15; c++){
+            //System.out.println("Col: "+c);
             point += oneLineScore(getColumn(b, c));
         }
         //"/" Diagonal score
         int[][] diag = diagonalOrder(b);
         for(int i = 0; i < 29; i++){
+            //System.out.println("Diag / : "+i);
             point += oneLineScore(diag[i]);
         }
         //"\" Diagonal score
         //flip horizontally
         int[][] diag2 = diagonalOrder(horizontalTransform(b));
         for(int j = 0; j < 15; j++){
+            //System.out.println("Diag : "+j);
             point += oneLineScore(diag2[j]);
         }
         //System.out.println(point);
@@ -354,6 +363,7 @@ public class Game {
         for(int i = 0; i < 15; i++){
             for(int j = 0; j < 15; j++){
                 //empty
+
                 if(node.getFutureBoard()[i][j] == 0 && has_neighbor(i, j, node)){
                     Node child = new Node();
                     child.setMove(new int[]{i,j});
@@ -362,12 +372,12 @@ public class Game {
                     child.setFutureBoard(newBoard);
                     node.addChild(child);
                     addChildren(child, flipTurn(turn),depth-1);
-                    node.setScore(evaluateFunc(node,flipTurn(turn)));
+
 
                     //node.setScore(addChildren(node, flipTurn(turn),depth-1));
                 }
             }
-        }
+        }node.setScore(evaluateFunc(node,flipTurn(turn)));
 
         return node;
     }
@@ -387,16 +397,19 @@ public class Game {
         turn = 1;
         node = addChildren(node, turn, depth);
         int[] move = node.getBestMove();
+
+
         board[move[0]][move[1]] = 1;
+        //System.out.println(move[0]+" "+move[1]);
         return printMove(move);
     }
 
     private String printMove(int[] move){
         String print = teamName + " ";
-        char letter = (char) (move[0]+1+64);
+        char letter = (char) (move[1]+1+64);
         print += letter;
         print += " ";
-        print += Integer.toString(move[1]+1);
+        print += Integer.toString(move[0]+1);
 
         return print;
     }
