@@ -39,7 +39,9 @@ public class Node {
         return this;
     }
 
-    public int[] getMove(){return move;}
+    public int[] getMove(){
+        return move;
+    }
 
     public Node setScore(int s){
         score = s;
@@ -50,6 +52,12 @@ public class Node {
         return score;
     }
 
-    public void setBestMove(int[] bestM){bestMove = bestM;}
-    public int[] getBestMove(){return bestMove;}
+    public void setBestMove(int[] bestM){
+        bestMove = bestM;
+    }
+
+    public int[] getBestMove(){
+        return bestMove;
+    }
+
 }
