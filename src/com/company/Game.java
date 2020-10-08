@@ -268,23 +268,21 @@ public class Game {
             System.out.println("Current (min,max) = ("+ beta +", ("+alpha+")");
             //if greater, opponent will never choose you
             if (utilityFunc(mychildren.get(k)) > beta) {
-                mychildren.remove(k);
+                //mychildren.remove(k);
+                n.remove(mychildren.get(k));
                 //if smaller, prune away the previous min node
             } else if (utilityFunc(mychildren.get(k)) < beta) {
                 //update min
                 beta = utilityFunc(mychildren.get(k));
                 //remove the previous min node
-                mychildren.remove(currentminchild);
+                //mychildren.remove(currentminchild);
+                n.remove(mychildren.get(currentminchild));
                 //remember the new min node
                 currentminchild = k;
             }
         }
 
-        //update the list of children that survive after pruning
-        //here it throws an error of Error:(282, 11) 'children' has private access in 'com.company.Node'
-        //how to add the entire list of children directly?
-        n.children = mychildren;
-
+        //return the node with list of children that survive after pruning
         return n;
     }
 

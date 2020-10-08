@@ -30,6 +30,12 @@ public class Node {
         return this;
     }
 
+    //remove child during pruning
+    public Node removeChild(Node child){
+        children.remove(child);
+        return this;
+    }
+
     public ArrayList<Node> getChildren(){
         return children;
     }
