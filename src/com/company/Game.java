@@ -25,13 +25,6 @@ public class Game {
         teamName = name;
         setUpChart();
         setUpBoard();
-        //tree = new Node();
-//        int[] x = new int[] {1,1,0,0,0};
-        //int val = scoreChart.get(x);
-        //System.out.println(val);
-//        if(scoreChart.containsKey(x)){
-//            System.out.println("Countain!");
-//        }
 
     }
 
@@ -48,23 +41,27 @@ public class Game {
         scoreChart.put(new Key(1, 0 , 1, 0, 0), 2);
         scoreChart.put(new Key(1, 1 , 0, 0, 0), 5);
         scoreChart.put(new Key(1, 1 , 1, 0, 0), 10);
-        scoreChart.put(new Key(1, 1 , 1, 1, 0), 20);
+        scoreChart.put(new Key(1, 1 , 1, 1, 0), 50);
         scoreChart.put(new Key(1, 1 , 1, 1, 1), 10000); //win
 
         scoreChart.put(new Key(1, 1 , 0, 1, 0), 10);
         scoreChart.put(new Key(1, 1 , 0, 0, 1), 7);
         scoreChart.put(new Key(1, 0 , 0, 0, 1), 3);
 
-        scoreChart.put(new Key(1, -1 , -1, -1, 1), 15);
-        scoreChart.put(new Key(0, 1 , -1, 0, 0), 1);
-        scoreChart.put(new Key(0, 0 , -1, -1, 0), 1);
-//        System.out.println("PUT");
-//        int[] x = new int[]{1,1,0,0,0};
-//        Key k = new Key (x);
-//        Key k = new Key(1,1,0,0,0);
-//        if(scoreChart.containsKey(k)){
-//            System.out.println("Countain!");
-//        }
+        scoreChart.put(new Key(1, -1 , -1, -1, 1), 25);
+        scoreChart.put(new Key(1, -1 , -1, 0, 0), 10);
+        scoreChart.put(new Key(1, -1 , -1, -1, 0), 30);
+        scoreChart.put(new Key(1, -1 , -1, -1, -1), 50);
+
+        scoreChart.put(new Key(-1, -1 , 0, 0, 0), -5);
+        scoreChart.put(new Key(-1, -1 , -1, 0, 0), -30);
+        scoreChart.put(new Key(-1, -1 , -1, -1, 0), -50);
+        scoreChart.put(new Key(-1, -1 , -1, -1, -1), -10000);
+
+
+
+
+
 
 
         //...
@@ -101,16 +98,24 @@ public class Game {
 
     public boolean updateBoard(File move){
         String content = readMove(move);
-        if(content == ""){
+        if(content == "" && secondMove == true){
             firstMove = true;
             secondMove = false;
             return true;
         }
+        if(content == ""){
+            return false;
+        }
         String[] parse =  content.split(" ");
-        System.out.println(content);
+
         if(parse.length == 3 && Integer.parseInt(parse[2]) != -1){
-            char c = Character.toUpperCase(parse[1].charAt(0));
+            char c = parse[1].charAt(0);
+            if(parse[0].equals(teamName) || c == Character.toUpperCase(c)){
+                return false;
+            }
+            System.out.println(content);
             //System.out.println(c);
+            c = Character.toUpperCase(c);
             if(c-64-1 >= 15 || c-64-1 < 0 ||
                     Integer.parseInt(parse[2])-1 >=15 || Integer.parseInt(parse[2])-1 < 0){
                 System.out.println("The move_file includes move range > 15 or < 1");
@@ -120,7 +125,8 @@ public class Game {
 
             return true;
         }else{
-            System.out.println("move_file includes wrong format input.");
+            System.out.println("move_file includes wrong format input: "+ content);
+
             return false;
         }
     }
@@ -135,7 +141,7 @@ public class Game {
                 String data = myReader.nextLine();
                 content += data;
             }
-            myReader.close();
+            //myReader.close();
             return content;
         } catch (FileNotFoundException e) {
             //e.printStackTrace();
@@ -292,16 +298,16 @@ public class Game {
             for(int j = 0; j < 15; j++){
                 //empty
                 if(node.getFutureBoard()[i][j] == 0){
-                        Node child = new Node();
-                        child.setMove(new int[]{i,j});
-                        int[][] newBoard = copyArray(node.getFutureBoard());
-                        newBoard[i][j] = turn;
-                        child.setFutureBoard(newBoard);
-                        node.addChild(child);
-                        addChildren(child, flipTurn(turn),depth-1);
-                        node.setScore(evaluateFunc(node,flipTurn(turn)));
+                    Node child = new Node();
+                    child.setMove(new int[]{i,j});
+                    int[][] newBoard = copyArray(node.getFutureBoard());
+                    newBoard[i][j] = turn;
+                    child.setFutureBoard(newBoard);
+                    node.addChild(child);
+                    addChildren(child, flipTurn(turn),depth-1);
+                    node.setScore(evaluateFunc(node,flipTurn(turn)));
 
-                        //node.setScore(addChildren(node, flipTurn(turn),depth-1));
+                    //node.setScore(addChildren(node, flipTurn(turn),depth-1));
                 }
             }
         }
