@@ -247,9 +247,46 @@ public class Game {
 
     }
 
-    private String alpha_beta_pruning(Node n){
-        return "";
+    private Node alpha_beta_pruning(Node n) {
+        //max, I search +inf/-inf in Java but it has type double
+        int alpha = 10000000;
+        //min
+        int beta = -10000000;
+
+        //assuming we only have two layers right now
+        //then parent node n is always the max layer
+        ArrayList<Node> mychildren = n.getChildren();
+
+        //min = value of first child
+        alpha = utilityFunc(mychildren.get(0));
+        //remember the child with the minimum value right now, which is the first in DFS
+        int currentminchild = 0;
+
+        //evaluate the rest children
+        for (int k = 1; k < mychildren.size(); k++) {
+            //if greater, opponent will never choose you
+            if (utilityFunc(mychildren.get(k)) > alpha) {
+                mychildren.remove(k);
+                //if smaller, prune away the previous min node
+            } else if (utilityFunc(mychildren.get(k)) < alpha) {
+                //update min
+                alpha = utilityFunc(mychildren.get(k));
+                //remove the previous min node
+                mychildren.remove(currentminchild);
+                //remember the new min node
+                currentminchild = k;
+            }
+        }
+
+        //update the list of children that survive after pruning
+        //here it throws an error of Error:(282, 11) 'children' has private access in 'com.company.Node'
+        //how to add the entire list of children directly?
+        n.children = mychildren;
+
+        return n;
     }
+
+
 
     private boolean has_neighbor(Node n){
         int column = n.getMove()[0];
