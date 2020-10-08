@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class Game {
     int[][] board = new int[15][15];
-    int score = 0;
+    //int score = 0;
     //Node tree;
     HashMap<Key, Integer> scoreChart = new HashMap<>();
     boolean firstMove = false;
@@ -235,7 +235,7 @@ public class Game {
         for(int j = 0; j < 15; j++){
             point += oneLineScore(diag2[j]);
         }
-        System.out.println(point);
+        //System.out.println(point);
         return point;
 
 
@@ -324,6 +324,7 @@ public class Game {
         turn = 1;
         node = addChildren(node, turn, depth);
         int[] move = node.getBestMove();
+        board[move[0]][move[1]] = 1;
         return printMove(move);
     }
 
