@@ -17,7 +17,7 @@ public class Game {
     boolean firstMove = false;
     String teamName = "";
     boolean secondMove = true;
-    int turn = 1;
+    //int turn = 1;
 
 
     Game(String name){
@@ -40,8 +40,11 @@ public class Game {
     private boolean setUpChart(){
         scoreChart.put(new Key(1, 0 , 1, 0, 0), 2);
         scoreChart.put(new Key(1, 1 , 0, 0, 0), 5);
-        scoreChart.put(new Key(1, 1 , 1, 0, 0), 10);
+        scoreChart.put(new Key(0, 0 , 0, 1, 1), 5);
+        scoreChart.put(new Key(1, 1 , 1, 0, 0), 30);
+        scoreChart.put(new Key(0, 0 , 1, 1, 1), 30);
         scoreChart.put(new Key(1, 1 , 1, 1, 0), 50);
+        scoreChart.put(new Key(0, 1 , 1, 1, 1), 50);
         scoreChart.put(new Key(1, 1 , 1, 1, 1), 10000); //win
 
         scoreChart.put(new Key(1, 1 , 0, 1, 0), 10);
@@ -52,11 +55,17 @@ public class Game {
         scoreChart.put(new Key(1, -1 , -1, 0, 0), 10);
         scoreChart.put(new Key(1, -1 , -1, -1, 0), 30);
         scoreChart.put(new Key(1, -1 , -1, -1, -1), 50);
-        scoreChart.put(new Key(1, -1, 0, 0, 0), 2);
+        scoreChart.put(new Key(-1, 1, 0, 0, 0), 10);
+        scoreChart.put(new Key(0, 0, 0, 1, -1), 10);
 
+        //scoreChart.put(new Key(1, -1, 0, 0, 0), -10);
+        //scoreChart.put(new Key(0, 0, 0, -1, 1), -10);
         scoreChart.put(new Key(-1, -1 , 0, 0, 0), -5);
+        scoreChart.put(new Key(0, 0 , 0, -1, -1), -5);
         scoreChart.put(new Key(-1, -1 , -1, 0, 0), -30);
+        scoreChart.put(new Key(0, 0 , -1, -1, -1), -30);
         scoreChart.put(new Key(-1, -1 , -1, -1, 0), -50);
+        scoreChart.put(new Key(0, -1 , -1, -1, -1), -50);
         scoreChart.put(new Key(-1, -1 , -1, -1, -1), -10000);
 
 
@@ -81,17 +90,12 @@ public class Game {
             System.out.println("Second Move!");
             move = centerMove();
         }else{
-            move = minimax(1);
+            move = minimax(2);
         }
 
 
         rewriteFile(file, move);
         return move;
-
-
-
-        //return false;
-
 
     }
 
@@ -122,9 +126,6 @@ public class Game {
             }
             System.out.println(content);
             board[Integer.parseInt(parse[2])-1][c-64-1] = -1;
-            if(parse[1].equals("h") && parse[2].equals(9)){
-                System.out.println("That point: "+board[8][7]);
-            }
 
             return true;
         }else{
@@ -161,15 +162,13 @@ public class Game {
         return teamName + " H 8";
     }
 
-    private boolean secondMove(){
-        //make sure in center;
-        if(board[7][7] == -1){
-            board[7][7] = 1;
-        }
-        return true;
-    }
-
-
+//    private boolean secondMove(){
+//        //make sure in center;
+//        if(board[7][7] == -1){
+//            board[7][7] = 1;
+//        }
+//        return true;
+//    }
 
 
     private int oneLineScore(int[] oneLine){
@@ -300,6 +299,8 @@ public class Game {
     private boolean has_neighbor(int row, int column, Node n){
 //        int column = n.getMove()[0];
 //        int row = n.getMove()[1];
+
+
         if (column == 0 || column == 14 ||
                 row == 0 || row == 14){
             return true;
@@ -325,17 +326,21 @@ public class Game {
         if(turn == 1){
             int max = Integer.MIN_VALUE;
             for(Node child : children){
+
                 if(child.getScore() > max){
                     max = child.getScore();
                     n.setBestMove(child.getMove());
+                    //System.out.println("MAX point: "+max);
                 }
             }return max;
         }else{
             int min = Integer.MAX_VALUE;
             for(Node child : children){
+
                 if(child.getScore() < min){
                     min = child.getScore();
                     n.setBestMove(child.getMove());
+                    //System.out.println("MIN point: "+min);
                 }
             }return min;
 
@@ -343,13 +348,14 @@ public class Game {
     }
 
     private int flipTurn(int turn){
+        int t = turn;
         if(turn == 1){
-            turn = -1;
+            t = -1;
         }
         if(turn == -1){
-            turn = 1;
+            t = 1;
         }
-        return turn;
+        return t;
     }
 
 
@@ -377,7 +383,7 @@ public class Game {
                     //node.setScore(addChildren(node, flipTurn(turn),depth-1));
                 }
             }
-        }node.setScore(evaluateFunc(node,flipTurn(turn)));
+        }node.setScore(evaluateFunc(node,turn));
 
         return node;
     }
@@ -394,7 +400,7 @@ public class Game {
     private String minimax(int depth){
         Node node = new Node();
         node.setFutureBoard(copyArray(board));
-        turn = 1;
+        int turn = 1;
         node = addChildren(node, turn, depth);
         int[] move = node.getBestMove();
 
