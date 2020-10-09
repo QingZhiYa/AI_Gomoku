@@ -165,14 +165,6 @@ public class Game {
         return teamName + " H 8";
     }
 
-//    private boolean secondMove(){
-//        //make sure in center;
-//        if(board[7][7] == -1){
-//            board[7][7] = 1;
-//        }
-//        return true;
-//    }
-
 
     private int oneLineScore(int[] oneLine){
         if(oneLine.length < 5){return 0;}
@@ -259,45 +251,6 @@ public class Game {
 
     }
 
-    private Node alpha_beta_pruning(Node n) {
-        //max, I search +inf/-inf in Java but it has type double
-        int alpha = Integer.MAX_VALUE;
-        //min
-        int beta = Integer.MIN_VALUE;
-
-        //assuming we only have two layers right now
-        //then parent node n is always the max layer
-        ArrayList<Node> mychildren = n.getChildren();
-
-        //min = value of first child
-        beta = utilityFunc(mychildren.get(0));
-        //remember the child with the minimum value right now, which is the first in DFS
-        int currentminchild = 0;
-
-        //evaluate the rest children
-        for (int k = 1; k < mychildren.size(); k++) {
-            //output the current min & max
-            System.out.println("Current (min,max) = ("+ beta +","+alpha+")");
-            //if greater, opponent will never choose you
-            if (utilityFunc(mychildren.get(k)) > beta) {
-                //mychildren.remove(k);
-                n.removeChild(mychildren.get(k));
-                //if smaller, prune away the previous min node
-            } else if (utilityFunc(mychildren.get(k)) < beta) {
-                //update min
-                beta = utilityFunc(mychildren.get(k));
-                //remove the previous min node
-                //mychildren.remove(currentminchild);
-                n.removeChild(mychildren.get(currentminchild));
-                //remember the new min node
-                currentminchild = k;
-            }
-        }
-
-        //return the node with list of children that survive after pruning
-        return n;
-    }
-
 
 
     private boolean has_neighbor(int row, int column, Node n){
@@ -325,7 +278,11 @@ public class Game {
         }
     }
 
-    private int evaluateFunc(Node n, int turn){
+
+    private int evaluateFunc(Node n, int turn, int depth){
+        if(depth <= 0){
+            return utilityFunc(n);
+        }
         ArrayList<Node> children = n.getChildren();
         if(turn == 1){
             int max = Integer.MIN_VALUE;
@@ -363,34 +320,6 @@ public class Game {
     }
 
 
-    private Node addChildren(Node node, int turn, int depth){
-        if(depth <= 0){
-            int score = utilityFunc(node);
-            node.setScore(score);
-            //return score;
-            return node;
-        }
-        for(int i = 0; i < 15; i++){
-            for(int j = 0; j < 15; j++){
-                //empty
-
-                if(node.getFutureBoard()[i][j] == 0 && has_neighbor(i, j, node)){
-                    Node child = new Node();
-                    child.setMove(new int[]{i,j});
-                    int[][] newBoard = copyArray(node.getFutureBoard());
-                    newBoard[i][j] = turn;
-                    child.setFutureBoard(newBoard);
-                    node.addChild(child);
-                    addChildren(child, flipTurn(turn),depth-1);
-
-
-                    //node.setScore(addChildren(node, flipTurn(turn),depth-1));
-                }
-            }
-        }node.setScore(evaluateFunc(node,turn));
-
-        return node;
-    }
 
     private int[][] copyArray(int[][] ary){
         int[][] copy = new int[15][15];
@@ -401,11 +330,90 @@ public class Game {
         }return copy;
     }
 
+    private int addChildren(Node node, int alpha, int beta, int turn, int depth){
+        if(depth <= 0){
+            int score = evaluateFunc(node, turn, depth);
+            node.setScore(score);
+            //return score;
+            return score;
+        }
+
+        if(turn == 1){
+            for(int i = 0; i < 15; i++){
+                for(int j = 0; j < 15; j++){
+                    //empty
+                    if(node.getFutureBoard()[i][j] == 0 && has_neighbor(i, j, node)){
+                        Node child = new Node();
+                        child.setMove(new int[]{i,j});
+                        //child.turn = flipTurn(node.turn);
+                        int[][] newBoard = copyArray(node.getFutureBoard());
+                        newBoard[i][j] = turn;
+                        child.setFutureBoard(newBoard);
+
+                        int v = addChildren(child, alpha, beta, flipTurn(turn), depth-1);
+
+                            if (v > alpha) {
+                                alpha = v;
+                                node.setScore(v);
+                                node.setBestMove(new int[]{i,j});
+                            }
+                            if(alpha >= beta){return alpha;}
+                            node.addChild(child);
+
+                        //addChildren(child, -beta, -alpha, flipTurn(turn),depth-1);
+
+
+                        //node.setScore(addChildren(node, flipTurn(turn),depth-1));
+                    }
+                }
+            }
+            //node.setScore(evaluateFunc(node, depth, turn));
+            return alpha;
+        }else {
+            for (int i = 0; i < 15; i++) {
+                for (int j = 0; j < 15; j++) {
+                    //empty
+
+                    if (node.getFutureBoard()[i][j] == 0 && has_neighbor(i, j, node)) {
+                        Node child = new Node();
+                        child.setMove(new int[]{i, j});
+                        //child.turn = flipTurn(node.turn);
+                        int[][] newBoard = copyArray(node.getFutureBoard());
+                        newBoard[i][j] = turn;
+                        child.setFutureBoard(newBoard);
+
+                        int v = addChildren(child, alpha, beta, flipTurn(turn), depth - 1);
+                        //node.setScore(evaluateFunc(node, depth, turn));
+                        if(v < beta){
+                            beta = v;
+                            node.setBestMove(new int[]{i,j});
+                        }
+                        if(beta <= alpha){return beta;}
+
+
+                        node.addChild(child);
+
+                        //addChildren(child, -beta, -alpha, flipTurn(turn),depth-1);
+
+
+                        //node.setScore(addChildren(node, flipTurn(turn),depth-1));
+                    }
+                }
+            }
+
+            return beta;
+
+        }
+    }
+
     private String minimax(int depth){
         Node node = new Node();
         node.setFutureBoard(copyArray(board));
         int turn = 1;
-        node = addChildren(node, turn, depth);
+        //node.turn = turn;
+        int alpha = Integer.MIN_VALUE;
+        int beta = Integer.MAX_VALUE;
+        addChildren(node, alpha, beta, turn, depth);
         int[] move = node.getBestMove();
 
 
@@ -413,6 +421,7 @@ public class Game {
         //System.out.println(move[0]+" "+move[1]);
         return printMove(move);
     }
+
 
     private String printMove(int[] move){
         String print = teamName + " ";
