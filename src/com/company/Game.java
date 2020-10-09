@@ -55,6 +55,7 @@ public class Game {
         scoreChart.put(new Key(1, -1 , -1, 0, 0), 10);
         scoreChart.put(new Key(1, -1 , -1, -1, 0), 30);
         scoreChart.put(new Key(1, -1 , -1, -1, -1), 50);
+        scoreChart.put(new Key(-1, -1 , -1, -1, 1), 50);
         scoreChart.put(new Key(-1, 1, 0, 0, 0), 10);
         scoreChart.put(new Key(0, 0, 0, 1, -1), 10);
 
@@ -64,6 +65,8 @@ public class Game {
         scoreChart.put(new Key(0, 0 , 0, -1, -1), -5);
         scoreChart.put(new Key(-1, -1 , -1, 0, 0), -30);
         scoreChart.put(new Key(0, 0 , -1, -1, -1), -30);
+        scoreChart.put(new Key(1, 1 , 1, 1, -1), -10);
+        scoreChart.put(new Key(-1, 1 , 1, 1, 1), -10);
         scoreChart.put(new Key(-1, -1 , -1, -1, 0), -50);
         scoreChart.put(new Key(0, -1 , -1, -1, -1), -50);
         scoreChart.put(new Key(-1, -1 , -1, -1, -1), -10000);
@@ -250,6 +253,7 @@ public class Game {
             point += oneLineScore(diag2[j]);
         }
         //System.out.println(point);
+
         return point;
 
 
@@ -310,14 +314,14 @@ public class Game {
                      0 0 0
                      0 1 0
                      0 0 0 */
-            return n.getFutureBoard()[column + 1][row] != 0 ||
-                    n.getFutureBoard()[column - 1][row] != 0 ||
-                    n.getFutureBoard()[column - 1][row - 1] != 0 ||
-                    n.getFutureBoard()[column - 1][row + 1] != 0 ||
-                    n.getFutureBoard()[column + 1][row - 1] != 0 ||
-                    n.getFutureBoard()[column + 1][row + 1] != 0 ||
-                    n.getFutureBoard()[column][row + 1] != 0 ||
-                    n.getFutureBoard()[column][row - 1] != 0;
+            return n.getFutureBoard()[row][column + 1] != 0 ||
+                    n.getFutureBoard()[row][column - 1] != 0 ||
+                    n.getFutureBoard()[row - 1] [column - 1]!= 0 ||
+                    n.getFutureBoard()[row + 1][column - 1] != 0 ||
+                    n.getFutureBoard()[row - 1][column + 1] != 0 ||
+                    n.getFutureBoard()[row + 1][column + 1] != 0 ||
+                    n.getFutureBoard()[row + 1][column] != 0 ||
+                    n.getFutureBoard()[row - 1][column] != 0;
         }
     }
 
