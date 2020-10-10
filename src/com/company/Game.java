@@ -274,7 +274,7 @@ public class Game {
     }
 
 
-    //Heuristic evaluation function that implements minimax
+    //Heuristic evaluation function
     private int evaluateFunc(Node n, int turn, int depth){
         if(depth <= 0){
             return utilityFunc(n);
