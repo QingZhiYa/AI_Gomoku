@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Main {
-    public static String teamName = "teamname1";
+    public static String teamName = "GLM";
 
     public static void main(String[] args) {
         Game game = new Game(teamName);
@@ -29,17 +29,23 @@ public class Main {
                             String Move = game.makeMove(readFile("move_file"));
                             System.out.println("My Move: "+Move);
                         }
+                        continue;
 
-
-                    }else{
+                    }
+                    else{
                         System.out.println("Game Ended");
                         System.exit(0);
+                        break;
                     }
                 }
 
             }
-
-
+            if(readFile("end_game") != null){
+                System.out.println("***************end_game file found ***************");
+                System.out.println("Game Ended");
+                System.exit(0);
+                break;
+            }
         }
 
 

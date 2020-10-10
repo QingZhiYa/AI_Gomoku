@@ -71,12 +71,6 @@ public class Game {
         scoreChart.put(new Key(0, -1 , -1, -1, -1), -50);
         scoreChart.put(new Key(-1, -1 , -1, -1, -1), -10000);
 
-
-
-
-
-
-
         //...
         return true;
     }
