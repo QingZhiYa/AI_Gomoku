@@ -209,6 +209,7 @@ public class Game {
         }return diagArray;
     }
 
+    //Utility function of a given board
     private int utilityFunc(Node n){
         //System.out.println("Move: "+ n.getMove()[0]+ " "+ n.getMove()[1]);
         int point = 0;
@@ -273,6 +274,7 @@ public class Game {
     }
 
 
+    //Heuristic evaluation function that implements minimax
     private int evaluateFunc(Node n, int turn, int depth){
         if(depth <= 0){
             return utilityFunc(n);
@@ -324,6 +326,7 @@ public class Game {
         }return copy;
     }
 
+    //alpha-beta pruning before adding a child
     private int addChildren(Node node, int alpha, int beta, int turn, int depth){
         if(depth <= 0){
             int score = evaluateFunc(node, turn, depth);
@@ -400,6 +403,7 @@ public class Game {
         }
     }
 
+    //minimax implementation
     private String minimax(int depth){
         Node node = new Node();
         node.setFutureBoard(copyArray(board));
