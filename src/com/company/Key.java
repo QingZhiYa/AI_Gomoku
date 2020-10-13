@@ -6,13 +6,15 @@ public class Key {
     private int flag3 = 0;
     private int flag4 = 0;
     private int flag5 = 0;
+    private int flag6 = 0;
 
-    public Key(int flag1, int flag2, int flag3, int flag4, int flag5) {
+    public Key(int flag1, int flag2, int flag3, int flag4, int flag5, int flag6) {
         this.flag1 = flag1;
         this.flag2 = flag2;
         this.flag3 = flag3;
         this.flag4 = flag4;
         this.flag5 = flag5;
+        this.flag6 = flag6;
 
     }
 
@@ -22,6 +24,7 @@ public class Key {
         flag3 = array[2];
         flag4 = array[3];
         flag5 = array[4];
+        flag6 = array[5];
     }
 
     @Override
@@ -35,7 +38,8 @@ public class Key {
                 this.flag2 == otherKey.flag2 &&
                 this.flag3 == otherKey.flag3 &&
                 this.flag4 == otherKey.flag4 &&
-                this.flag5 == otherKey.flag5;
+                this.flag5 == otherKey.flag5 &&
+                this.flag6 == otherKey.flag6;
     }
 
     @Override
@@ -46,6 +50,7 @@ public class Key {
         result = 31 * result + Integer.valueOf(this.flag3).hashCode();
         result = 31 * result + Integer.valueOf(this.flag4).hashCode();
         result = 31 * result + Integer.valueOf(this.flag5).hashCode();
+        result = 31 * result + Integer.valueOf(this.flag6).hashCode();
         return result;
     }
 }

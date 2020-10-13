@@ -12,12 +12,13 @@ import java.util.Scanner;
 public class Game {
     int[][] board = new int[15][15];
     //int score = 0;
-    //Node tree;
+    Node tree;
     HashMap<Key, Integer> scoreChart = new HashMap<>();
     boolean firstMove = false;
     String teamName = "";
     boolean secondMove = true;
-    //int turn = 1;
+    int degree = 1;
+
 
 
     Game(String name){
@@ -25,6 +26,8 @@ public class Game {
         teamName = name;
         setUpChart();
         setUpBoard();
+        tree = new Node();
+        tree.setFutureBoard(board);
 
     }
 
@@ -38,38 +41,111 @@ public class Game {
     }
 
     private boolean setUpChart(){
-        scoreChart.put(new Key(1, 0 , 1, 0, 0), 2);
-        scoreChart.put(new Key(1, 1 , 0, 0, 0), 5);
-        scoreChart.put(new Key(0, 0 , 0, 1, 1), 5);
-        scoreChart.put(new Key(1, 1 , 1, 0, 0), 30);
-        scoreChart.put(new Key(0, 0 , 1, 1, 1), 30);
-        scoreChart.put(new Key(1, 1 , 1, 1, 0), 50);
-        scoreChart.put(new Key(0, 1 , 1, 1, 1), 50);
-        scoreChart.put(new Key(1, 1 , 1, 1, 1), 10000); //win
+        //Five in a row
+        scoreChart.put(new Key(1, 1 , 1, 1, 1, 0), 100000);//win
+        scoreChart.put(new Key(1, 1 , 1, 1, 1, -1), 100000);//win
+        scoreChart.put(new Key(-1, -1 , -1, -1, -1, 0), -100000);//lose
+        scoreChart.put(new Key(-1, -1 , -1, -1, -1, 1), -100000);//lose
 
-        scoreChart.put(new Key(1, 1 , 0, 1, 0), 10);
-        scoreChart.put(new Key(1, 1 , 0, 0, 1), 7);
-        scoreChart.put(new Key(1, 0 , 0, 0, 1), 3);
+        //Four in a row with both sides empty
+        scoreChart.put(new Key(0, 1 , 1, 1, 1, 0), 10000);
+        scoreChart.put(new Key(0, -1 , -1, -1, -1, 0), -10000);
 
-        scoreChart.put(new Key(1, -1 , -1, -1, 1), 25);
-        scoreChart.put(new Key(1, -1 , -1, 0, 0), 10);
-        scoreChart.put(new Key(1, -1 , -1, -1, 0), 30);
-        scoreChart.put(new Key(1, -1 , -1, -1, -1), 50);
-        scoreChart.put(new Key(-1, -1 , -1, -1, 1), 50);
-        scoreChart.put(new Key(-1, 1, 0, 0, 0), 10);
-        scoreChart.put(new Key(0, 0, 0, 1, -1), 10);
+        //Four in a row with one side empty
+        scoreChart.put(new Key(-1, 1 , 1, 1, 1, 0), 1000);
+        scoreChart.put(new Key(0, 1 , 1, 1, 1, -1), 1000);
+        scoreChart.put(new Key(1, -1 , -1, -1, -1, 0), -1000);
+        scoreChart.put(new Key(0, -1 , -1, -1, -1, 1), -1000);
 
-        //scoreChart.put(new Key(1, -1, 0, 0, 0), -10);
-        //scoreChart.put(new Key(0, 0, 0, -1, 1), -10);
-        scoreChart.put(new Key(-1, -1 , 0, 0, 0), -5);
-        scoreChart.put(new Key(0, 0 , 0, -1, -1), -5);
-        scoreChart.put(new Key(-1, -1 , -1, 0, 0), -30);
-        scoreChart.put(new Key(0, 0 , -1, -1, -1), -30);
-        scoreChart.put(new Key(1, 1 , 1, 1, -1), -10);
-        scoreChart.put(new Key(-1, 1 , 1, 1, 1), -10);
-        scoreChart.put(new Key(-1, -1 , -1, -1, 0), -50);
-        scoreChart.put(new Key(0, -1 , -1, -1, -1), -50);
-        scoreChart.put(new Key(-1, -1 , -1, -1, -1), -10000);
+        //Three in a row with both sides empty
+        scoreChart.put(new Key(0, 1 , 1, 1, 0, 0), 1000);
+        scoreChart.put(new Key(0, 1 , 1, 1, 0, -1), 1000);
+        scoreChart.put(new Key(0, 1 , 1, 1, 0, 1), 1000);
+        scoreChart.put(new Key(0, 0 , 1, 1, 1, 0), 1000);
+        scoreChart.put(new Key(1, 0 , 1, 1, 1, 0), 1000);
+        scoreChart.put(new Key(-1, 0 , 1, 1, 1, 0), 1000);
+
+        scoreChart.put(new Key(0, -1 , -1, -1, 0, 0), -1000);
+        scoreChart.put(new Key(0, -1 , -1, -1, 0, 1), -1000);
+        scoreChart.put(new Key(0, -1 , -1, -1, 0, -1), -1000);
+        scoreChart.put(new Key(0, 0 , -1, -1, -1, 0), -1000);
+        scoreChart.put(new Key(-1, 0 , -1, -1, -1, 0), -1000);
+        scoreChart.put(new Key(1, 0 , -1, -1, -1, 0), -1000);
+
+        //Three in a row with one side empty
+        scoreChart.put(new Key(-1, 1 , 1, 1, 0, 0), 100);
+        scoreChart.put(new Key(-1, 1 , 1, 1, 0, -1), 100);
+        scoreChart.put(new Key(-1, 1 , 1, 1, 0, 1), 1000);
+
+        scoreChart.put(new Key(0, 1 , 1, 1, -1, 0), 100);
+        scoreChart.put(new Key(0, 1 , 1, 1, -1, -1), 100);
+        scoreChart.put(new Key(0, 1 , 1, 1, -1, 1), 100);
+
+        scoreChart.put(new Key(0, 0 , 1, 1, 1, -1), 100);
+        scoreChart.put(new Key(1, 0 , 1, 1, 1, -1), 1000);
+        scoreChart.put(new Key(-1, 0 , 1, 1, 1, -1), 100);
+
+        scoreChart.put(new Key(0, -1, 1, 1, 1, 0), 100);
+        scoreChart.put(new Key(1, -1, 1, 1, 1, 0), 100);
+        scoreChart.put(new Key(-1, -1 , 1, 1, 1, 0), 100);
+
+
+        scoreChart.put(new Key(1, -1 , -1, -1, 0, 0), -100);
+        scoreChart.put(new Key(1, -1 , -1, -1, 0, 1), -100);
+        scoreChart.put(new Key(1, -1 , -1, -1, 0, -1), -1000);
+
+        scoreChart.put(new Key(0, -1 , -1, -1, 1, 0), -100);
+        scoreChart.put(new Key(0, -1 , -1, -1, 1, 1), -100);
+        scoreChart.put(new Key(0, -1 , -1, -1, 1, -1), -100);
+
+        scoreChart.put(new Key(0, 0 , -1, -1, -1, 1), -100);
+        scoreChart.put(new Key(-1, 0 , -1, -1, -1, 1), -1000);
+        scoreChart.put(new Key(1, 0 , -1, -1, -1, 1), -100);
+
+        scoreChart.put(new Key(0, 1, -1, -1, -1, 0), -100);
+        scoreChart.put(new Key(-1, 1, -1, -1, -1, 0), -100);
+        scoreChart.put(new Key(1, 1 , -1, -1, -1, 0), -100);
+
+        //Two in a row with both sides empty
+        scoreChart.put(new Key(0, 1, 1, 0, 0, 0), 100);
+        scoreChart.put(new Key(0, 1, 1, 0, 0, 1), 100);
+        scoreChart.put(new Key(0, 1, 1, 0, 0, -1), 100);
+        scoreChart.put(new Key(0, 1, 1, 0, 1, 0), 1000);
+        scoreChart.put(new Key(0, 1, 1, 0, 1, 1), 100);
+        scoreChart.put(new Key(0, 1, 1, 0, 1, -1), 1000);
+        scoreChart.put(new Key(0, 1, 1, 0, -1, 0), 100);
+        scoreChart.put(new Key(0, 1, 1, 0, -1, 1), 100);
+        scoreChart.put(new Key(0, 1, 1, 0, -1, -1), 100);
+
+        scoreChart.put(new Key(0, 0, 0, 1, 1, 0), 100);
+        scoreChart.put(new Key(0, 1, 0, 1, 1, 0), 1000);
+        scoreChart.put(new Key(0, -1, 0, 1, 1, 0), 100);
+        scoreChart.put(new Key(1, 0, 0, 1, 1, 0), 100);
+        scoreChart.put(new Key(1, 1, 0, 1, 1, 0), 1000);
+        scoreChart.put(new Key(1, -1, 0, 1, 1, 0), 100);
+        scoreChart.put(new Key(-1, 0, 0, 1, 1, 0), 100);
+        scoreChart.put(new Key(-1, 1, 0, 1, 1, 0), 100);
+        scoreChart.put(new Key(-1, -1, 0, 1, 1, 0), 100);
+
+        scoreChart.put(new Key(0, -1, -1, 0, 0, 0), -100);
+        scoreChart.put(new Key(0, -1, -1, 0, 0, 1), -100);
+        scoreChart.put(new Key(0, -1, -1, 0, 0, -1), -100);
+        scoreChart.put(new Key(0, -1, -1, 0, 1, 0), -100);
+        scoreChart.put(new Key(0, -1, -1, 0, 1, 1), -100);
+        scoreChart.put(new Key(0, -1, -1, 0, 1, -1), -100);
+        scoreChart.put(new Key(0, -1, -1, 0, -1, 0), -1000);
+        scoreChart.put(new Key(0, -1, -1, 0, -1, 1), -100);
+        scoreChart.put(new Key(0, -1, -1, 0, -1, -1), -1000);
+
+        scoreChart.put(new Key(0, 0, 0, -1, -1, 0), -100);
+        scoreChart.put(new Key(0, -1, 0, -1, -1, 0), -1000);
+        scoreChart.put(new Key(0, 1, 0, -1, -1, 0), -100);
+        scoreChart.put(new Key(-1, 0, 0, -1, -1, 0), -100);
+        scoreChart.put(new Key(-1, -1, 0, -1, -1, 0), -1000);
+        scoreChart.put(new Key(-1, 1, 0, -1, -1, 0), -100);
+        scoreChart.put(new Key(1, 0, 0, -1, -1, 0), -100);
+        scoreChart.put(new Key(1, -1, 0, -1, -1, 0), -100);
+        scoreChart.put(new Key(1, 1, 0, -1, -1, 0), -100);
 
         //...
         return true;
@@ -124,6 +200,15 @@ public class Game {
             System.out.println(content);
             board[Integer.parseInt(parse[2])-1][c-64-1] = -1;
 
+            Node child = tree.getChild(new int[]{Integer.parseInt(parse[2])-1, c-64-1});
+            if(child == null){
+                tree = new Node();
+                tree.setFutureBoard(board);
+            }else{
+                tree = child;
+                tree.setFutureBoard(board);
+            }
+
             return true;
         }else{
             System.out.println("move_file includes wrong format input: "+ content);
@@ -161,12 +246,12 @@ public class Game {
 
 
     private int oneLineScore(int[] oneLine){
-        if(oneLine.length < 5){return 0;}
+        if(oneLine.length < 6){return 0;}
         int point = 0;
-        for(int i = 0; i < oneLine.length - 5; i++){
+        for(int i = 0; i < oneLine.length - 6; i++){
 
-            int[] five = Arrays.copyOfRange(oneLine, i, i+5);
-            Key key = new Key(five);
+            int[] six = Arrays.copyOfRange(oneLine, i, i+6);
+            Key key = new Key(six);
 
             if(scoreChart.containsKey(key)){
                 //System.out.println("Add Points");
@@ -246,6 +331,56 @@ public class Game {
 
     }
 
+    private int enlargeScale(int edge, int degree, boolean add){
+        if(add){
+            if(edge+degree > 14){return 14;}
+            else{return edge+degree;}
+        }else{
+            if(edge-degree < 0){return 0;}
+            else {return edge-degree;}
+        }
+    }
+
+    private int getLowerRow(Node n){
+        for(int i = 0; i < 15; i++){
+            for(int j = 0; j < 15; j++){
+                if(n.getFutureBoard()[i][j] != 0){
+                    return i;
+                }
+            }
+        }return 0;
+    }
+
+    private int getUpperRow(Node n){
+        for(int i = 14; i >= 0; i--){
+            for(int j = 0; j < 15; j++){
+                if(n.getFutureBoard()[i][j] != 0){
+                    return i;
+                }
+            }
+        }return 14;
+    }
+
+    private int getLowerCol(Node n){
+        for(int i = 0; i < 15; i++){
+            for(int j = 0; j < 15; j++){
+                if(n.getFutureBoard()[j][i] != 0){
+                    return i;
+                }
+            }
+        }return 0;
+    }
+
+    private int getUpperCol(Node n){
+        for(int i = 14; i >= 0; i--){
+            for(int j = 0; j < 15; j++){
+                if(n.getFutureBoard()[j][i] != 0){
+                    return i;
+                }
+            }
+        }return 14;
+    }
+
 
 
     private boolean has_neighbor(int row, int column, Node n){
@@ -304,16 +439,6 @@ public class Game {
         }
     }
 
-    private int flipTurn(int turn){
-        int t = turn;
-        if(turn == 1){
-            t = -1;
-        }
-        if(turn == -1){
-            t = 1;
-        }
-        return t;
-    }
 
 
 
@@ -335,52 +460,56 @@ public class Game {
             return score;
         }
 
+        int upperRow = enlargeScale(getUpperRow(node), degree, true);
+        int lowerRow = enlargeScale(getLowerRow(node), degree, false);
+        int upperCol = enlargeScale(getUpperCol(node), degree, true);
+        int lowerCol = enlargeScale(getLowerCol(node), degree, false);
+
+
         if(turn == 1){
-            for(int i = 0; i < 15; i++){
-                for(int j = 0; j < 15; j++){
+            for(int i = lowerRow; i <= upperRow; i++){
+                for(int j = lowerCol; j <= upperCol; j++){
                     //empty
-                    if(node.getFutureBoard()[i][j] == 0 && has_neighbor(i, j, node)){
+                    if(node.getFutureBoard()[i][j] == 0 &&
+                            has_neighbor(i, j, node) &&
+                            node.getChild(new int[]{i,j}) == null){
                         Node child = new Node();
                         child.setMove(new int[]{i,j});
-                        //child.turn = flipTurn(node.turn);
                         int[][] newBoard = copyArray(node.getFutureBoard());
-                        newBoard[i][j] = turn;
+                        newBoard[i][j] = 1;
                         child.setFutureBoard(newBoard);
 
-                        int v = addChildren(child, alpha, beta, flipTurn(turn), depth-1);
+                        int v = addChildren(child, alpha, beta, -1, depth-1);
 
-                            if (v > alpha) {
-                                alpha = v;
-                                node.setScore(v);
-                                node.setBestMove(new int[]{i,j});
-                            }
-                            if(alpha >= beta){return alpha;}
-                            node.addChild(child);
+                        if (v > alpha) {
+                            alpha = v;
+                            node.setScore(v);
+                            node.setBestMove(new int[]{i,j});
+                        }
+                        if(alpha >= beta){return alpha;}
+                        node.addChild(child);
 
-                        //addChildren(child, -beta, -alpha, flipTurn(turn),depth-1);
-
-
-                        //node.setScore(addChildren(node, flipTurn(turn),depth-1));
                     }
                 }
             }
             //node.setScore(evaluateFunc(node, depth, turn));
             return alpha;
         }else {
-            for (int i = 0; i < 15; i++) {
-                for (int j = 0; j < 15; j++) {
+            for(int i = lowerRow; i <= upperRow; i++){
+                for(int j = lowerCol; j <= upperCol; j++){
                     //empty
 
-                    if (node.getFutureBoard()[i][j] == 0 && has_neighbor(i, j, node)) {
+                    if (node.getFutureBoard()[i][j] == 0 &&
+                            has_neighbor(i, j, node) &&
+                            node.getChild(new int[]{i,j}) == null) {
                         Node child = new Node();
                         child.setMove(new int[]{i, j});
-                        //child.turn = flipTurn(node.turn);
                         int[][] newBoard = copyArray(node.getFutureBoard());
-                        newBoard[i][j] = turn;
+                        newBoard[i][j] = -1;
                         child.setFutureBoard(newBoard);
 
-                        int v = addChildren(child, alpha, beta, flipTurn(turn), depth - 1);
-                        //node.setScore(evaluateFunc(node, depth, turn));
+                        int v = addChildren(child, alpha, beta, 1, depth - 1);
+
                         if(v < beta){
                             beta = v;
                             node.setBestMove(new int[]{i,j});
@@ -390,10 +519,6 @@ public class Game {
 
                         node.addChild(child);
 
-                        //addChildren(child, -beta, -alpha, flipTurn(turn),depth-1);
-
-
-                        //node.setScore(addChildren(node, flipTurn(turn),depth-1));
                     }
                 }
             }
@@ -405,18 +530,19 @@ public class Game {
 
     //minimax implementation
     private String minimax(int depth){
-        Node node = new Node();
-        node.setFutureBoard(copyArray(board));
+//        Node node = new Node();
+        tree.setFutureBoard(copyArray(board));
         int turn = 1;
-        //node.turn = turn;
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
-        addChildren(node, alpha, beta, turn, depth);
-        int[] move = node.getBestMove();
+        addChildren(tree, alpha, beta, turn, depth);
+        int[] move = tree.getBestMove();
 
 
         board[move[0]][move[1]] = 1;
         //System.out.println(move[0]+" "+move[1]);
+        tree = tree.getChild(move);
+        tree.setFutureBoard(board);
         return printMove(move);
     }
 

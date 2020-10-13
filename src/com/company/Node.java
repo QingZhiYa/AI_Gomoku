@@ -30,6 +30,20 @@ public class Node {
         return this;
     }
 
+//    public boolean hasChild(int[] m){
+//        for(Node child : children){
+//            if(child.getMove()[0] == m[0] &&
+//                    child.getMove()[1] == m[1]){return true;}
+//        }return false;
+//    }
+
+    public Node getChild(int[] m){
+        for(Node child : children){
+            if(child.getMove()[0] == m[0] &&
+                    child.getMove()[1] == m[1]){return child;}
+        }return null;
+    }
+
 
     public ArrayList<Node> getChildren(){
         return children;
