@@ -1,7 +1,7 @@
 README
 
 Group members:
-Yaru Gong, Lyu Yang (Jimmy), and Zhifei Ma (Mona)
+Yaru Gong, Yang Lyu (Jimmy), and Zhifei Ma (Mona)
 
 Team name:
 GLM
@@ -29,9 +29,11 @@ max/min layer, and its depth, return the max/min value among all child
 nodes based on a given turn.
 
 The heuristics and/or strategies that you employed to decide how to expand the minimax tree without exceeding your time limit:
-When adding children to a given Node, we implements alpha beta pruning
+1. When adding children to a given Node, we implements alpha beta pruning
 that get rid of children who don't have potential to win, by updating alpha and
 beta (current min & max) value when building the tree.
+2. We only create a tree that store each state, and the tree can be reused in next-time search.
+3. We only consider a move when it is empty and as least one adjacent cell is not empty.
 
 Did your program play against human players?
 Yes. we play with our program by changing the move file. It's able to
@@ -40,10 +42,11 @@ win human player.
 Did your program play against itself?
 Yes. We mainly tested our program by playing against a copy of itself.
 We include the output of the result and it's 57 pages long.
+For the tournament submission, it beats our original submission for both first move and second move.
 
 Did your program play against other programs?
 Not any other program rather than itself, but we are confident in wining
-the tornament.
+the tournament.
 
 How did your program do during those games?
 Not bad, we think our program plays better than ourselves because it
@@ -51,7 +54,7 @@ generates next move so fast while it's hard for us to make a decision
 within 10 seconds.
 
 describe the strengths and the weaknesses of your program:
-Strengths: Fast and accurate
+Strengths: Fast and accurate, it blocks the opponent really well.
 Weakness: may perform better with some randomness because right
 now the result of our program playing with itself is deterministic,
 maybe we will set the first move more randomly in the future.
@@ -67,3 +70,4 @@ the same amount of time.
 around its surrounding 8 positions, if not, then it's considered as an isolated
 child that will not be considered as one of the optimal move, we get rid of it
 directly and save time to explore other promising nodes.
+3. The tree can be inherited, so next-time it could save time on searching the repetitive moves.
